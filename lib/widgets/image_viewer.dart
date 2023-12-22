@@ -6,7 +6,7 @@ class ImageViewer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Image.network(url, fit: BoxFit.fill,
-        errorBuilder: (context, error, stacktrace) {
+        errorBuilder: (context ,error , stacktrace) {
           return const Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,

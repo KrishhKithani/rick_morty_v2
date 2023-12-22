@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rick_morty_v2/providers/character_provider.dart';
-
+import 'package:rick_morty_v2/providers/character_provider2.dart';
 import '../widgets/image_viewer.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -12,37 +12,40 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+
   @override
   Widget build(BuildContext context) {
-    final receivedData = ref.watch(characterProvider);
+    final receivedData = ref.watch(characterListProvider);
     return receivedData.when(
+      skipLoadingOnReload: false,
       loading: () {
         return const Scaffold( body :Center(child: CircularProgressIndicator()));
       },
       error: (error, stack){
-        return const Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'There is an error',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25),
-                ),
-                // OutlinedButton(
-                //     onPressed: fetchData, child: const Text('Retry'))
-              ],
-            ));
+        return Scaffold(
+          body: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'There is an error${error.toString()}',
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25),
+                  ),
+                  ElevatedButton(onPressed: (){
+                    ref.read(characterListProvider.notifier).fetchData();
+                  }, child: const Text('Retry'))
+                  // OutlinedButton(
+                  //     onPressed: fetchData, child: const Text('Retry'))
+                ],
+              )),
+        );
       },
       data: (characters) {
-        if (characters == null ) {
-          return const Center(child: SizedBox(child: CircularProgressIndicator()));
-        }
-        final characterName = characters[0].name;
         return  ListView.builder(
-          itemCount: characters!.length ,
+          itemCount: characters.length ,
           itemBuilder: (BuildContext context, int index) {
 
             // if (index == characters!.length && isLoadingMore) {
@@ -61,7 +64,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     width: MediaQuery.of(context).size.width / 2.4,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(80)),
-                    child: ImageViewer(url: characters![index].image)),
+                    child: ImageViewer(url: characters[index].image)),
                 const SizedBox(
                   width: 20,
                 ),
@@ -74,14 +77,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       const SizedBox(
                         height: 5,
                       ),
-                      Text((characters![index].id).toString()),
+                      Text((characters[index].id).toString()),
                       InkWell(
                         onTap: () {
                           Navigator.pushNamed(context, '/charDetails',
-                              arguments: characters![index].url);
+                              arguments: characters[index].url);
                         },
                         child: Text(
-                          characters![index].name,
+                          characters[index].name,
                           style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -92,9 +95,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         children: [
                           CircleAvatar(
                             backgroundColor:
-                            (characters![index].status == "unknown")
+                            (characters[index].status == "unknown")
                                 ? Colors.white54
-                                : (characters![index].status == "Alive")
+                                : (characters[index].status == "Alive")
                                 ? Colors.green
                                 : Colors.red,
                             radius: 6,
@@ -104,7 +107,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                           Expanded(
                             child: Text(
-                              '${characters![index].status} - ${characters![index].species}',
+                              '${characters[index].status} - ${characters[index].species}',
                               style: const TextStyle(color: Colors.white),
                             ),
                           ),
@@ -120,9 +123,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       InkWell(
                         onTap: () {
                           Navigator.pushNamed(context, '/locationDetails',
-                              arguments: characters![index].location.url);
+                              arguments: characters[index].location.url);
                         },
-                        child: Text(characters![index].location.name,
+                        child: Text(characters[index].location.name,
                             style: const TextStyle(color: Colors.white)),
                       ),
                       const SizedBox(
@@ -130,7 +133,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                       const Text('First Seen in :',
                           style: TextStyle(color: Colors.grey)),
-                      Text(characters![index].origin.name,
+                      Text(characters[index].origin.name,
                           style: const TextStyle(color: Colors.white)),
                       const SizedBox(
                         height: 5,
