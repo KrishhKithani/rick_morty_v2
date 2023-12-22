@@ -1,15 +1,11 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rick_morty_v2/models/character.dart';
 import 'package:rick_morty_v2/models/character_list.dart';
 
-
-
 class CharacterProviderNotifier
     extends StateNotifier<AsyncValue<List<Character>>> {
-
-  CharacterProviderNotifier() : super(const AsyncValue.loading()){
+  CharacterProviderNotifier() : super(const AsyncValue.loading()) {
     fetchData();
   }
 
@@ -21,8 +17,8 @@ class CharacterProviderNotifier
       final response = await dio.get(url);
       CharacterList characterList = CharacterList.fromJson(response.data);
       state = AsyncValue.data(characterList.results);
-    } catch (error , S) {
-      state =  AsyncValue.error(error,S );
+    } catch (error, S) {
+      state = AsyncValue.error(error, S);
     }
   }
   // Future<void> fetch() async {
@@ -32,9 +28,7 @@ class CharacterProviderNotifier
   // }
 }
 
-  final characterListProvider = StateNotifierProvider<
-      CharacterProviderNotifier,
-      AsyncValue<List<Character>>>(
-        (ref) => CharacterProviderNotifier(),
-  );
-
+final characterListProvider = StateNotifierProvider.autoDispose<CharacterProviderNotifier,
+    AsyncValue<List<Character>>>(
+  (ref) => CharacterProviderNotifier(),
+);

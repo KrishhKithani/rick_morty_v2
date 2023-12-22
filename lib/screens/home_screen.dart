@@ -12,42 +12,42 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-
   @override
   Widget build(BuildContext context) {
     final receivedData = ref.watch(characterListProvider);
     return receivedData.when(
       skipLoadingOnReload: false,
       loading: () {
-        return const Scaffold( body :Center(child: CircularProgressIndicator()));
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
       },
-      error: (error, stack){
+      error: (error, stack) {
         return Scaffold(
           body: Center(
               child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'There is an error${error.toString()}',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25),
-                  ),
-                  ElevatedButton(onPressed: (){
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'There is an error${error.toString()}',
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25),
+              ),
+              ElevatedButton(
+                  onPressed: () {
                     ref.read(characterListProvider.notifier).fetchData();
-                  }, child: const Text('Retry'))
-                  // OutlinedButton(
-                  //     onPressed: fetchData, child: const Text('Retry'))
-                ],
-              )),
+                  },
+                  child: const Text('Retry'))
+              // OutlinedButton(
+              //     onPressed: fetchData, child: const Text('Retry'))
+            ],
+          )),
         );
       },
       data: (characters) {
-        return  ListView.builder(
-          itemCount: characters.length ,
+        return ListView.builder(
+          itemCount: characters.length,
           itemBuilder: (BuildContext context, int index) {
-
             // if (index == characters!.length && isLoadingMore) {
             //   return const Padding(
             //     padding: EdgeInsets.all(16.0),
@@ -62,8 +62,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 const SizedBox(width: 10),
                 Container(
                     width: MediaQuery.of(context).size.width / 2.4,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(80)),
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(80)),
                     child: ImageViewer(url: characters[index].image)),
                 const SizedBox(
                   width: 20,
@@ -95,11 +95,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         children: [
                           CircleAvatar(
                             backgroundColor:
-                            (characters[index].status == "unknown")
-                                ? Colors.white54
-                                : (characters[index].status == "Alive")
-                                ? Colors.green
-                                : Colors.red,
+                                (characters[index].status == "unknown")
+                                    ? Colors.white54
+                                    : (characters[index].status == "Alive")
+                                        ? Colors.green
+                                        : Colors.red,
                             radius: 6,
                           ),
                           const SizedBox(
